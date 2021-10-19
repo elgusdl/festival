@@ -1,0 +1,10 @@
+var agt = navigator.userAgent.toLowerCase();
+$(window).on("load", function(){
+	if (agt.indexOf("msie") != -1 || agt.indexOf("trident") != -1) {
+		setTimeout(function(){
+			if($(".productVisual").is(":visible")){
+				$(".productVisual").stop().animate({marginTop: "848px"}, 500, "easeOutExpo");
+			}
+		}, 100);
+	}
+});

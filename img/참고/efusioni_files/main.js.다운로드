@@ -1,0 +1,405 @@
+var timeout = false, randomCnt = parseInt(Math.random() * (Math.abs(5)+1)) + Math.min(5, 0);
+$(window).on("load", function(){
+	//비디오 preload
+	var preVideo = $(".visualArea .list li:eq("+randomCnt+") .section video");
+	preVideo[0].load();
+	preVideo[0].onloadeddata = function(){
+		showMain();
+	}		
+});
+function showMain(){
+	$("#wrapper").removeClass("load");
+	goSection(1);
+}
+function goSection(num){
+	if(num == 1){ //visual
+		visualSwiper.init();
+		if(isCompany){
+			setTimeout(companyControl.destroy, 500);
+		}
+	} else if(num == 2) { //company
+		companyControl.init();
+		if(isVisual){
+			setTimeout(visualSwiper.destroy, 500);
+		}
+		if(isMovie){
+			setTimeout(movieControl.destroy, 500);
+		}
+	} else if(num == 3) { //movie
+		movieControl.init();
+		if(isCompany){
+			setTimeout(companyControl.destroy, 500);
+		}
+	}
+}
+
+//visual
+var totalCnt = 0, activeCnt = 0, prevCnt = 0, prevCnt2 = 0, nextCnt = 0, nextCnt2 = 0, beforeCnt, video = [], targetVideo, isVisual = false;
+var p_before = 0, p_active = 0, p_term = 0, $p_bar, wheelState = false, autoVisual = true;
+var startX, startY, endX, endY, moveX, moveY, angle;
+var mousewheelevt = (/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel" //FF doesn't recognize mousewheel as of FF3.x
+var isFireFox = (/Firefox/i.test(navigator.userAgent))
+var visualSwiper = {
+	init : function init(){
+		isVisual = true;
+		$targetParent = $(".visualArea");
+		$target = $targetParent.find(".list li");
+		$paging = $(".visualPaging li");
+		$p_bar = $(".visualPaging").find(".bar");
+		$target.each(function(i){
+			totalCnt = i;
+		});
+		if(isCompany){
+			activeCnt = parseInt(Math.random() * (Math.abs(5)+1)) + Math.min(5, 0);			
+		} else {
+			activeCnt = randomCnt;			
+		}
+		//console.log(isCompany +":"+ activeCnt)
+		$("#wrapper").removeClass().addClass("showSection1");
+		visualSwiper.action();
+		$paging.eq(activeCnt).stop().addClass("active");
+		beforeCnt = activeCnt;
+		if(isFireFox && !($(".visualArea .bg").is(":visible"))){
+			$(".visualArea").append("<div class='bg'></div>")
+		}
+		$targetParent.off(mousewheelevt);
+		$targetParent.on(mousewheelevt, function(e){
+			var wheelDelta = e.originalEvent.wheelDelta;
+			if(!wheelDelta){//firefox
+				wheelDelta = -event.detail;
+			}
+			if(wheelDelta < 0) { //아래로
+	 			if(!wheelState){
+					wheelState = true;
+		 			goSection(2);
+					e.preventDefault();
+				}
+	 		}
+			wheelState = false;
+		})
+		$targetParent.off("mousedown touchstart");
+		$targetParent.on("mousedown touchstart", function(e){ 
+			visualSwiper.dragStart(e);
+			$(this).off("mousemove touchmove");
+			$(this).on("mousemove touchmove", function(e){ 
+				visualSwiper.dragMove(e);
+			});
+		})
+		$targetParent.off("mouseup touchend");
+		$targetParent.on("mouseup touchend", function(e){ 
+			visualSwiper.dragEnd(e);
+		});
+
+	},
+	next : function(obj){
+		beforeCnt = activeCnt;
+		activeCnt = activeCnt + 1;
+		visualSwiper.action(obj);
+	},
+	prev : function(obj){
+		beforeCnt = activeCnt;
+		activeCnt = activeCnt - 1;
+		visualSwiper.action(obj);
+	},
+	action : function(obj){
+		if(activeCnt > totalCnt){
+			activeCnt = 0;
+		}
+		if(activeCnt < 0){
+			activeCnt = totalCnt;
+		}
+		prevCnt = activeCnt - 1;
+		prevCnt2 = prevCnt - 1;
+		nextCnt = activeCnt + 1;
+		nextCnt2 = nextCnt + 1;
+		if(prevCnt < 0){
+			prevCnt = totalCnt;
+		}
+		if(nextCnt > totalCnt){
+			nextCnt = 0;
+			nextCnt2 = 1;
+		}
+		if(nextCnt == totalCnt){
+			nextCnt2 = 0;
+		}
+		
+		$target.stop().removeClass();
+		$target.eq(activeCnt).stop().addClass("active");
+		$target.eq(prevCnt).stop().addClass("prev");
+		$target.eq(prevCnt2).stop().addClass("prev2");
+		$target.eq(nextCnt).stop().addClass("next");
+		$target.eq(nextCnt2).stop().addClass("next2");
+		
+		$paging.stop().removeClass();
+		$paging.eq(beforeCnt).stop().addClass("before");
+		$paging.eq(activeCnt).stop().addClass("active");
+		
+		p_term = (parseInt($paging.css("margin-right"))) * 2 + 7;
+		$p_bar = $(".visualPaging").find(".bar");
+			
+		$p_bar.css({
+			left: activeCnt * p_term + "px"			
+		});
+		if(beforeCnt < activeCnt){
+			p_before = beforeCnt * p_term;
+			p_active = activeCnt * p_term;
+			$(".visualPaging").removeClass("plus minus");
+			
+			if(beforeCnt == 0 && activeCnt == totalCnt){ //처음에서 마지막으로 갈때
+				$p_bar.stop().css({
+					left: p_active + "px",
+					right: "initial",
+					width: "7px"					
+				});
+			} else {
+				$(".visualPaging").addClass("plus");
+				$p_bar.stop().css({
+					left: p_before + "px",
+					right: "initial"
+				}).animate({
+					width: Math.abs((activeCnt-beforeCnt))*p_term + 7 + "px"
+				}, 300, "easeOutExpo", function(){
+					$p_bar.animate({
+						left: p_active +"px",
+						width: "7px"
+					}, 200, "easeInExpo");
+				});
+			}
+			
+		} else if(beforeCnt > activeCnt){
+			p_before = (totalCnt - beforeCnt) * p_term;
+			p_active = (totalCnt - activeCnt) * p_term;
+			$(".visualPaging").removeClass("plus minus");
+			
+			if(beforeCnt == totalCnt && activeCnt == 0){ //마지막에서  처음으로 갈때
+				$p_bar.stop().css({
+					left: "initial",
+					right: p_active +"px",
+					width: "7px"
+				});
+			} else {
+				$(".visualPaging").addClass("minus");
+				$p_bar.stop().css({
+					right: p_before + "px",
+					left: "initial"
+				}).animate({
+					width: Math.abs((activeCnt-beforeCnt))*p_term + 7 + "px"
+				}, 300, "easeOutExpo", function(){
+					$p_bar.animate({
+						right: p_active +"px",
+						width: "7px"
+					}, 200, "easeInExpo");
+				});	
+			}
+		}
+		
+		$target.each(function(i){
+			video[i] = $(this).find(".section video");
+		});
+		targetVideo = $target.eq(activeCnt).find(".section video");
+		targetVideo[0].play();
+		
+		if($(obj).parents(".controlBtn").length > 0 || $(obj).parents(".visualPaging").length > 0){
+			$target.each(function(i){
+				if(i != activeCnt){
+					video[i][0].pause();
+					video[i][0].currentTime = 0;
+					video[i].unbind("ended");				
+				}
+			});
+		} 
+		/*if(autoVisual){
+			targetVideo.bind("ended", function(){
+				$target.each(function(i){
+					video[i][0].pause();
+					video[i][0].currentTime = 0;
+				});
+				targetVideo.unbind("ended");
+				visualSwiper.next();
+			});
+		} else {
+			$target.each(function(i){				
+				if(i != activeCnt){
+					video[i][0].pause();
+					video[i][0].currentTime = 0;
+				}
+			});
+			targetVideo.bind("ended", function(){	
+				video[activeCnt][0].pause();
+				video[activeCnt][0].currentTime = 0;
+				targetVideo.unbind("ended");
+				visualSwiper.next();
+			});
+		}*/
+		$target.each(function(i){				
+			if(i != activeCnt){
+				video[i][0].pause();
+				video[i][0].currentTime = 0;
+			}
+		});
+		targetVideo.unbind("ended");
+		targetVideo.bind("ended", function(){	
+			video[activeCnt][0].pause();
+			video[activeCnt][0].currentTime = 0;
+			visualSwiper.next();
+		});
+	},
+	paging : function(obj){
+		beforeCnt = activeCnt;
+		activeCnt = $(obj).parents("li").index();
+		visualSwiper.action(obj);
+		autoVisual = false;
+		setTimeout(function(){autoVisual = true}, 2000);
+	},
+	destroy : function(){
+		$target.each(function(i){
+			video[i] = $(this).find(".section video");
+			video[i][0].pause();
+			video[i][0].currentTime = 0;
+			$(this).removeClass();
+		});	
+		$paging.removeClass();
+		$p_bar.removeAttr("style");
+		$(".visualArea").off(mousewheelevt);
+		isVisual = false;
+	},	
+	dragStart : function(e){
+		startX = e.pageX || e.originalEvent.changedTouches[0].pageX;
+		startY = e.pageY || e.originalEvent.changedTouches[0].pageY;
+	}, 
+	dragMove : function(e) {
+		endX = e.pageX || e.originalEvent.changedTouches[0].pageX;
+		endY = e.pageY || e.originalEvent.changedTouches[0].pageY;
+		moveX = endX - startX;
+		moveY = endY - startY;
+		angle = Math.atan2((endY - startY), (endX - startX)) * 180 / Math.PI;
+		if(moveX != 0){
+			if(Math.abs(angle) < 45){ //prev
+				//visualSwiper.prev();					
+			}
+			if(Math.abs(angle) > 135) { //next
+				//visualSwiper.next();
+			}
+		}
+	},
+	dragEnd : function(e) {
+		$targetParent.off("mousemove touchmove");
+		endX = e.pageX || e.originalEvent.changedTouches[0].pageX;
+		endY = e.pageY || e.originalEvent.changedTouches[0].pageY;
+		moveX = endX - startX;
+		moveY = endY - startY;
+		angle = Math.atan2(moveY, moveX) * 180 / Math.PI;
+		if(Math.abs(moveX) > 40){
+			if(Math.abs(angle) < 45){ //prev
+				autoVisual = false;
+				visualSwiper.prev();
+				e.preventDefault();
+				setTimeout(function(){autoVisual = true}, 2000);
+			}
+			if(Math.abs(angle) > 135) { //next
+				autoVisual = false;
+				visualSwiper.next();
+				e.preventDefault();
+				setTimeout(function(){autoVisual = true}, 2000);
+			}
+		}
+	}
+}
+
+//company 
+
+
+//movie
+var movie, isMovie = false, isFooter = false, stopBtn, mainMovieSrc, randomNum;
+var movieControl = {
+	init : function init(){
+		isMovie = true;
+		randomNum = parseInt(Math.random() * 18 + 1);
+		mainMovieSrc = "/2019/movie/main/"+ randomNum +".mp4"
+		movie = $(".movieArea video");
+		movie.find("source").attr("src", mainMovieSrc)
+		movie[0].load();
+		stopBtn = $(".movieArea").find(".pause"); 
+		$("#wrapper").removeClass().addClass("showSection3");
+		$(".movieArea").addClass("show");
+		if(isFireFox && !($(".movieArea .bg").is(":visible"))){
+			$(".movieArea").append("<div class='bg'></div>")
+		} 
+		$("#mainSection3").off(mousewheelevt);
+		$("#mainSection3").on(mousewheelevt, function(e){
+			var wheelDelta = e.originalEvent.wheelDelta;
+			if(!wheelDelta){//firefox
+				wheelDelta = -event.detail;
+			}
+		 	if(wheelDelta > 0) {
+				if(isFooter){
+					$("#footer").removeClass("show");
+					isFooter = false;					
+				} else {
+					goSection(2);
+				}
+			} else if(wheelDelta < 0) {
+				isFooter = true;
+				$("#footer").addClass("show");
+			}
+		});
+		setTimeout(function(){
+			movieControl.play()
+		}, 800);
+	},
+	play : function play(){
+		movie[0].play();
+		$(".movieArea").addClass("play").removeClass("show");
+		movieControl.mouseMove();
+		movie.unbind("ended");
+		movie.bind("ended", function(){	
+			movie[0].pause();
+			movie[0].currentTime = 0;
+			movieControl.next()
+		});
+		$("#header").hide();
+		$(".movieArea .pause").hide();
+	},
+	pause : function pause(){
+		movie[0].load();
+		$(".movieArea").removeClass("play").addClass("show");
+		stopBtn.hide().removeAttr("style");
+		$(".movieArea").off("mouseenter mouseleave mousemove");
+		$("#header").show();
+	},
+	next : function next(){
+		randomNum = parseInt(Math.random() * 18 + 1);
+		mainMovieSrc = "/2019/movie/main/"+ randomNum +".mp4"
+		movie.find("source").attr("src", mainMovieSrc)
+		movie[0].load();
+		movie[0].play();		
+	},
+	mouseMove : function mouseMove(){
+		$(".movieArea .pause").show();
+		$(".movieArea")
+		.on("mouseenter", function(e){ stopBtn.show(); })
+		.on("mouseleave", function(e){ stopBtn.hide(); })
+		.on("mousemove", function(e){
+			if(stopBtn.is(":hidden")){
+				stopBtn.show();
+			}
+			var x = e.pageX;
+			var y = e.pageY;
+			stopBtn.css({
+				"left" : x + "px",
+				"top" : y + "px" 
+			});
+		});
+	},
+	destroy : function destroy(){
+		if(movie){
+			movie[0].load();
+		}	
+		movieControl.pause()
+		stopBtn.hide().removeAttr("style");
+		$(".movieArea").removeClass("play show");	
+		$(".movieArea").off("mouseenter mouseleave mousemove");
+		$("#mainSection3").off(mousewheelevt);
+		isMovie = false;
+	}
+}

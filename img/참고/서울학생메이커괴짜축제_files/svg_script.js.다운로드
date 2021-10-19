@@ -1,0 +1,87 @@
+$(document).ready(function () {
+
+
+
+    $(function () {
+        $(window).resize(function () {
+            var width = $(window).width(),
+                height = $(window).height();
+            var svgwidth = $('.svg_cont').width();
+            var svginwidth =$('svg').width();
+            var svgWrapwidth = $('.svg_wrap').width();
+
+            var svgHeight = $('.svg_wrap').height();
+
+            //스크롤포함 window height
+            var windowHieght = $(window).outerHeight(true);
+            //스크롤제외 window width
+            var windowWidth = $(window).innerWidth();
+
+            //스크롤되는 contents width
+            var emWidth = $('.contents').prop('scrollWidth');
+            //스크롤바 height
+            var scrollbar = $(window).outerHeight(true) - $('.svg_wrap').height();
+
+           if (width / height > 16 / 9) {
+               $('.svg_cont').css('width', height * 16 / 9);
+               
+            }
+            
+            
+    
+            
+        if(svgwidth != $('svg').width()){
+            $('.svg_cont').css('width', svginwidth);
+           
+        }
+            
+            if(windowWidth >= svginwidth){
+                 $('.bt_wave').css('width', '100%');
+            }else if(windowWidth != svginwidth){
+                $('.bt_wave').css('width', svginwidth);
+            }
+            
+          
+          
+            
+            
+            
+            
+            
+
+            /*     if($(window).width() < 1620){
+                     $('.bt_wave').css('width', svgwidth);
+                         }else{
+                          $('.bt_wave').css('width', '100%');   
+                         }*/
+
+            
+   /*            $('.bt_wave').css('width', emWidth);*/
+            
+            
+         /*   if ($('.svg_wrap').height() == windowHieght - scrollbar) {
+
+                $('.bt_wave').css('width', emWidth);
+
+
+            } else if ($('.svg_wrap').height() == windowHieght) {
+                $('.bt_wave').css('width', '100%');
+            }
+*/
+
+
+        }).trigger('resize');
+        // trigger resize so it takes the
+        // right size on load
+
+
+    }).resize();
+
+
+
+
+
+
+
+
+});

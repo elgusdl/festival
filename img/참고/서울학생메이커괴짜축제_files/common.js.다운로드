@@ -1,0 +1,429 @@
+$(document).ready(function () {
+
+
+
+    /******************** common s ********************/
+    $('.wow').addClass('animated');
+
+    // faq 게시판 슬라이드
+    $('table.faq .list_tit').parent().next().addClass('asw_td').hide();
+    $('table.faq .list_tit').parent().next().children().addClass('asw_div');
+    $('table.faq .list_tit').click(function () {
+        $(this).parent().next('.asw_td').slideToggle(1);
+    });
+
+
+
+    // mobile gnb click
+    $(document).on('click', '.ham_btn', function () {
+        $(this).addClass('active');
+        $('.mobile_menu').slideDown();
+        $('.dim_layer').slideDown();
+
+        $('.side_con .nav a').removeClass('on');
+        $('.menu').children('.side').children().children().children().children('.nav').children('li:nth-child(1)').children('a').addClass('on');
+    });
+
+    $(document).on('click', '.ham_btn.active', function () {
+        $(this).removeClass('active');
+        $('.mobile_menu').stop().slideUp();
+        $('.dim_layer').stop().slideUp();
+    });
+
+    $(document).on('click', '.dim_layer', function () {
+        $('.ham_btn').removeClass('active');
+        $('.mobile_menu').stop().slideUp();
+        $('.dim_layer').stop().slideUp();
+    });
+
+
+    // s
+    $(window).resize(function () {
+
+        $('.mobile_menu').stop().slideUp();
+        $('.ham_btn').removeClass('active');
+        if ($(window).width() <= 768) {
+            $('.mobile_menu').addClass('mobileOn');
+            $('.mobile_menu .gnb > ul > li > ul').hide();
+        } else {
+            //$('.ham_btn').hide();
+            $('.mobile_menu').removeClass('mobileOn');
+            $('.mobile_menu .gnb > ul > li > ul').show();
+        }
+    }).resize();
+
+    $(document).on('click', '.mobileOn .gnb > ul > li > a', function (e) {
+        if ($(this).next('ul').length) {
+            e.preventDefault();
+        }
+        $(this).siblings().slideDown();
+        $(this).addClass('open');
+    });
+
+
+    $(document).on('click', '.mobileOn .gnb > ul > li > a.open', function () {
+        $(this).siblings().slideUp();
+        $(this).removeClass('open');
+    })
+
+
+
+    //전체메뉴 il 클릭 시 a 클릭
+    $('.mobile_menu .gnb ul li').click(function () {
+
+        $(this).children('a').get(0).click();
+
+    });
+
+
+
+    //e
+
+    // 부드럽게 스크롤
+    $('.top_btn').click('click', function (event) {
+        event.preventDefault();
+        $('html, body').stop().animate({
+            scrollTop: 0
+        }, 300);
+    });
+
+
+
+
+    // wow
+    new WOW().init();
+
+
+
+
+
+    $(document).on('click', '.lnb_menu li.on a', function (e) {
+        $(this).attr({
+            'href': '#none'
+        });
+        $(this).parent().siblings().slideDown();
+        $(this).parent().addClass('add');
+        $(".lnb_menu .more_btn").addClass('more_add');
+    });
+
+    $(document).on('click', '.lnb_menu li.on.add a', function (e) {
+        e.preventDefault();
+        $(this).parent().siblings().slideUp();
+        $(this).parent().removeClass('add');
+        $(".lnb_menu .more_btn").removeClass('more_add');
+    });
+
+
+
+    $(document).on('click', '.depth_w100 li.on', function (e) {
+        e.preventDefault();
+        $(this).siblings().slideToggle();
+    });
+
+
+
+
+
+
+
+    /* flicking */
+    var scrollStartPos = 0;
+    $('.flicking').each(function (index, element) {
+        $(this).wrap('<div id="f_wrapper_' + index + '" class="f_wrapper"></div>').wrap('<div class="f_wrapper_inner"></div>').wrap('<div class="f_scroller"></div>').before('<p class="touch">터치해서 좌우로 움직이세요</p>');
+    });
+
+
+
+
+
+
+    /******************** common e ********************/
+
+    $('.btn').click(function () {
+        $('.svg_wrap').hide();
+        $('.main_page').addClass('side_actv');
+
+         $('.mobile').siblings('.m_mobile').hide();
+    });
+
+
+
+
+    //main 사이드 페이지 :: 탭
+
+
+    //페이지 열 때, 첫번째 탭으로 초기화 시켜줌
+    /* $('.main_page .menu .more').click(function () {
+         $('.side_con .nav a').removeClass('on');
+         $(this).siblings('.side').children().children().children().children('.nav').children('li:nth-child(1)').children('a').addClass('on')
+     });*/
+    //클래스변경
+    $('.main_page .btn').click(function () {
+        $('.side_con .nav a').removeClass('on');
+        $('.menu').children('.side').children().children().children().children('.nav').children('li:nth-child(1)').children('a').addClass('on');
+    });
+    
+    
+
+    $('.side_con .tab_cont').hide();
+
+    //탭 클릭했을 때
+    $(document).on('click', '.side_con .nav a', function (e) {
+        var activeTab = $(this).attr("data-tab");
+        e.preventDefault();
+        $('.side_con .nav a').removeClass('on');
+        $(this).addClass('on');
+         
+        console.log(activeTab);
+        
+        if ($('.side_con .nav a').hasClass('on')) {
+
+           $('.side_con .tab_cont').hide();
+            $("#" + activeTab).fadeIn();
+        };
+
+    });
+
+    //main 사이드 페이지 :: 전체메뉴 클릭으로 레이어팝업 열기
+    $('.mobile_menu .gnb > ul > li > a').click(function () {
+
+        $('.ham_btn').removeClass('active');
+        $('.mobile_menu').stop().slideUp();
+        $('.dim_layer').stop().slideUp();
+
+    });
+
+
+
+    //main 사이드 페이지 :: 레이어 팝업
+
+
+    /* $('.btn').click(function(){
+        $('#svg_all').fadeOut(); 
+         $('.btn_box').fadeOut();
+     });*/
+
+    // 201016    
+    $('.mobile_menu .gnb > ul > li:nth-child(n+1):nth-child(-n+5) > a').click(function (e) {
+        e.preventDefault();
+        var activeLink = $(this).attr('href');
+        $(activeLink).children('.side').addClass('active');
+        $(activeLink).children('.side').fadeIn();
+        $('.main_vis').addClass('actv');
+        $(activeLink).children('.side').children('.side_con').children().children('.tab_cont.on').show();
+
+        $('.svg_wrap').hide();
+        $('.main_page').addClass('side_actv');
+        prtYoutube_1();
+        
+          $('.mobile').siblings('.m_mobile').hide();
+
+
+    });
+
+
+    
+    /*    $('.mobile_menu .gnb > ul > li:nth-child(2) > a').click(function(){
+            prtYoutube_1();
+    	prtYoutube_2();
+    	prtYoutube_3();
+    	prtYoutube_4();
+            
+        });*/
+
+
+
+
+    // 201016 e
+
+    $('.main_page .menu .more').click(function () {
+
+        $(this).siblings('.side').fadeIn();
+        $(this).siblings('.side').addClass('active');
+        $('.main_vis').addClass('actv');
+        $(this).siblings('.side').children('.side_con').children().children('.tab_cont.on').show();
+    });
+
+    $('.main_page .menu .more').click(function (e) {
+
+        e.preventDefault();
+    });
+
+    $('.side .close').click(function () {
+
+        $(this).parent().parent().parent('.side').fadeOut();
+        $(this).parent().parent().parent('.side').removeClass('active');
+        $('.main_vis').removeClass('actv');
+
+        $('.svg_wrap').show();
+        $('.main_page').removeClass('side_actv');
+
+         $('.mobile').siblings('.m_mobile').show();
+        $('.side_con .tab_cont').hide();
+    });
+    $('.side .bg').click(function () {
+
+        $(this).parent('.side').fadeOut();
+        $(this).parent('.side').removeClass('active');
+        $('.main_vis').removeClass('actv');
+
+        $('.svg_wrap').show();
+        $('.main_page').removeClass('side_actv');
+         $('.mobile').siblings('.m_mobile').show();
+          $('.side_con .tab_cont').hide();
+    });
+
+
+
+
+    //각 버튼별 side_cont
+
+    /*   $('.btn1').click(function(e){
+          e.preventDefault();
+           $('#menu6 .side').fadeIn();
+           $('#menu6 .side').addClass('active');
+            $('.main_vis').addClass('actv');
+            $('#menu6 .side').children('.side_con').children().children('.tab_cont.on').show();
+       });*/
+
+    $('.btn2').click(function (e) {
+        e.preventDefault();
+        $('#menu5 .side').fadeIn();
+        $('#menu5 .side').addClass('active');
+        $('.main_vis').addClass('actv');
+        $('#menu5 .side').children('.side_con').children().children('.tab_cont.on').show();
+
+
+    });
+    $('.btn3').click(function (e) {
+        e.preventDefault();
+        $('#menu4 .side').fadeIn();
+        $('#menu4 .side').addClass('active');
+        $('.main_vis').addClass('actv');
+        $('#menu4 .side').children('.side_con').children().children('.tab_cont.on').show();
+    });
+    $('.btn4').click(function (e) {
+        e.preventDefault();
+        $('#menu1 .side').fadeIn();
+        $('#menu1 .side').addClass('active');
+        $('.main_vis').addClass('actv');
+        $('#menu1 .side').children('.side_con').children().children('.tab_cont.on').show();
+    });
+    $('.btn5').click(function (e) {
+        e.preventDefault();
+        $('#menu2 .side').fadeIn();
+        $('#menu2 .side').addClass('active');
+        $('.main_vis').addClass('actv');
+        $('#menu2 .side').children('.side_con').children().children('.tab_cont.on').show();
+
+        prtYoutube_1();
+        prtYoutube_2();
+        prtYoutube_3();
+        prtYoutube_4();
+    });
+    $('.btn6').click(function (e) {
+        e.preventDefault();
+        $('#menu3 .side').fadeIn();
+        $('#menu3 .side').addClass('active');
+        $('.main_vis').addClass('actv');
+        $('#menu3 .side').children('.side_con').children().children('.tab_cont.on').show();
+    });
+
+
+    // 부드럽게 스크롤
+    $('.btn').click('click', function () {
+    
+        $('html, body').stop().animate({
+            scrollTop: 0
+        }, 300);
+    });
+    
+    
+    //모바일 사이즈에 따라 보였다가 안보였다가
+    $(window).resize(function(){
+       
+        if($(window).width() < 1300){
+            $('.main_page').addClass('mobile');
+             $('.m_mobile').show();
+            if($('.main_vis').hasClass('actv')){
+                $('.m_mobile').hide();
+            }
+            
+           
+        }else if($(window).width() >= 1300){
+           $('.main_page').removeClass('mobile');
+            $('.m_mobile').hide();
+           
+        }
+    }).resize();
+    
+
+	var date1 = new Date(2020, 11-1, 12, 23, 59, 59); //까지day0 출력
+	var date2 = new Date(2020, 11-1, 13, 23, 59, 59); //까지day1 출력
+	var date3 = new Date(2020, 11-1, 14, 23, 59, 00); //까지day2 출력 이후 day3출력
+
+
+	var today = new Date();
+
+	if(today.getTime() < date1.getTime()) {
+	    //day0
+	    //alert("test0");
+	}else if(today.getTime() < date2.getTime()) {
+	    //day1 출력
+
+
+	    $('.main_page .btn4, .m_mobile .btn4').click(function () {
+		//alert("test");
+		$('.menu1 .nav li:nth-child(1) a').removeClass('on');
+		$('.menu1 .nav li:nth-child(2) a').addClass('on').click();
+	    });
+	    $('.mobile_menu .gnb > ul > li > a:nth-child(1)').click(function () {
+		$('.menu1 .nav li:nth-child(1) a').removeClass('on');
+		$('.menu1 .nav li:nth-child(2) a').addClass('on').click();
+	    });
+	    //alert("test1");
+	}else if(today.getTime() < date3.getTime()) {
+	    //day2 출력
+	    $('.main_page .btn4, .m_mobile .btn4').click(function () {
+		$('.menu1 .nav li:nth-child(1) a').removeClass('on');
+		$('.menu1 .nav li:nth-child(3) a').addClass('on').click();
+	    });
+	    $('.mobile_menu .gnb > ul > li > a:nth-child(1)').click(function () {
+		$('.menu1 .nav li:nth-child(1) a').removeClass('on');
+		$('.menu1 .nav li:nth-child(3) a').addClass('on').click();
+	    });
+	    //alert("test2");
+	} else  {
+	    //day3
+	    //alert("test3");
+	}
+
+
+    
+/*
+        //20201027
+    //Day1 먼저 보이게 하기
+    $('.main_page .btn4, .m_mobile .btn4').click(function () {
+	//alert("test");
+        $('.menu1 .nav li:nth-child(1) a').removeClass('on');
+        $('.menu1 .nav li:nth-child(2) a').addClass('on').click();
+    });
+    $('.mobile_menu .gnb > ul > li > a:nth-child(1)').click(function () {
+        $('.menu1 .nav li:nth-child(1) a').removeClass('on');
+        $('.menu1 .nav li:nth-child(2) a').addClass('on').click();
+    });
+ */   
+
+        //Day2 먼저 보이게 하기
+//    $('.main_page .btn4').click(function () {
+//        $('.menu1 .nav li:nth-child(1) a').removeClass('on');
+//        $('.menu1 .nav li:nth-child(3) a').addClass('on').click();
+//    });
+//    $('.mobile_menu .gnb > ul > li > a:nth-child(1)').click(function () {
+//        $('.menu1 .nav li:nth-child(1) a').removeClass('on');
+//        $('.menu1 .nav li:nth-child(3) a').addClass('on').click();
+//    });
+
+    
+
+});

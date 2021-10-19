@@ -1,0 +1,27 @@
+{
+  "files": {
+    "main.css": "/festival/static/css/main.26b55484.chunk.css",
+    "main.js": "/festival/static/js/main.ad21c7a0.chunk.js",
+    "main.js.map": "/festival/static/js/main.ad21c7a0.chunk.js.map",
+    "runtime-main.js": "/festival/static/js/runtime-main.df97dbbe.js",
+    "runtime-main.js.map": "/festival/static/js/runtime-main.df97dbbe.js.map",
+    "static/js/2.828c1715.chunk.js": "/festival/static/js/2.828c1715.chunk.js",
+    "static/js/2.828c1715.chunk.js.map": "/festival/static/js/2.828c1715.chunk.js.map",
+    "static/js/3.060a4028.chunk.js": "/festival/static/js/3.060a4028.chunk.js",
+    "static/js/3.060a4028.chunk.js.map": "/festival/static/js/3.060a4028.chunk.js.map",
+    "index.html": "/festival/index.html",
+    "static/css/main.26b55484.chunk.css.map": "/festival/static/css/main.26b55484.chunk.css.map",
+    "static/js/2.828c1715.chunk.js.LICENSE.txt": "/festival/static/js/2.828c1715.chunk.js.LICENSE.txt",
+    "static/media/Event.css": "/festival/static/media/sp02.3ffda4cd.png",
+    "static/media/Channel.css": "/festival/static/media/side_vis01.e7818577.jpg",
+    "static/media/Exer.css": "/festival/static/media/side_vis02.7bfee312.jpg",
+    "static/media/Maraton.css": "/festival/static/media/side_vis03.9d4156aa.jpg",
+    "static/media/Online.css": "/festival/static/media/side_vis04.3c383e07.jpg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.df97dbbe.js",
+    "static/js/2.828c1715.chunk.js",
+    "static/css/main.26b55484.chunk.css",
+    "static/js/main.ad21c7a0.chunk.js"
+  ]
+}
